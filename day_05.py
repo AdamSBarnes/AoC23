@@ -1,4 +1,4 @@
-USE_SAMPLE = True
+USE_SAMPLE = False
 
 sample = """seeds: 79 14 55 13
 
@@ -90,10 +90,6 @@ def get_min_locs(seeds):
 get_min_locs(seeds)
 
 ### part two
-def find_min(ss, se, ds, de):
-    m = range(max(ss, ds), min(se, de) + 1)
-    return min(m) if m else ss
-
 def get_loc(seed):
     key = 'seed'
     item_pos = seed
@@ -110,3 +106,53 @@ for i in range(0,len(seeds),2):
     new_seeds.append((seeds[i], seeds[i] + seeds[i+1]))
 
 
+rev_iter_locs = [l for l in reversed(iter_locs)][1:] + ['seed']
+
+#reverse all the maps
+reverse_maps = {}
+for map in maps:
+    new_maps = []
+    for l in maps.get(map):
+        new_map = {}
+        new_map['source_start'] = l.get('source_start') + l.get('offset')
+        new_map['source_end'] = l.get('source_end') + l.get('offset')
+        new_map['offset'] = l.get('offset') * -1
+        new_maps.append(new_map)
+    name_parts = map.split(" ")[0].split("-")
+    new_name = f"{name_parts[2]}-to-{name_parts[0]} map:"
+    reverse_maps[new_name] = new_maps
+
+
+def get_rev_num(input_num, map_name):
+    for v in reverse_maps.get(map_name):
+        if v.get("source_start") <= input_num <= v.get("source_end"):
+            return input_num + v.get("offset")
+    return input_num
+
+
+rev_iter_locs = [l for l in reversed(iter_locs)][1:] + ['seed']
+
+def get_reverse_loc(location):
+    key = 'location'
+    item_pos = location
+    for loc in rev_iter_locs:
+        name = f"{key}-to-{loc} map:"
+        key = loc
+        next_num = get_rev_num(item_pos, name)
+        item_pos = next_num
+    return item_pos
+
+def in_list_ranges(num):
+    for r in new_seeds:
+        if r[0] <= num <= r[1]:
+            return num
+    return False
+
+i = 0
+while True:
+    i += 1
+    s = get_reverse_loc(i)
+    if in_list_ranges(s):
+        min_seed = i
+        print(i)
+        break
