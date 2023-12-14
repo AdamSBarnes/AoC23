@@ -84,11 +84,13 @@ def cycle_four(lines):
     lines = [''.join(l) for l in list(zip(*lines[::-1]))]
     return lines
 
+# get 200 samples of the outputs
 sampled_lines = []
 for _ in range(200):
     lines = cycle_four(lines)
     sampled_lines.append(lines)
 
+# get the nominal answer for each sample
 f = []
 for lines in sampled_lines:
     nums = []
@@ -97,13 +99,17 @@ for lines in sampled_lines:
         nums.append(num)
     f.append(sum(nums))
 
+# pattern appears to repeat
+def find_repeating_pattern(input_list, max_length = 30, min_length = 5):
+    for idx, l in enumerate(input_list):
+        for ml in range(min_length, max_length):
+            source = input_list[idx:idx+ml]
+            target = input_list[idx+ml:idx + (2 * ml)]
+            if source == target:
+                return(source, idx)
 
-zz = []
-for idx, _ in enumerate(f[:-1]):
-    zz.append(f[idx + 1] - f[idx])
 
-#starting at idx 108, pattern repeats of diffs
-# 108 is
-repeating_nums = f[108:126]
+pattern, pattern_start = find_repeating_pattern(f)
+p2 = pattern[(1000000000 - (pattern_start + 1)) % len(pattern)]
 
-p2 = repeating_nums[(1000000000 - 109) % len(repeating_nums)]
+
