@@ -25,9 +25,6 @@ else:
     with open('data/day_18.txt', 'r') as f:
         lines = [l.replace('\n', '').split(" ") for l in f.readlines() if l]
 
-
-
-
 inputs = []
 for l in lines:
     inputs.append((
@@ -55,24 +52,9 @@ def move(dir, num):
 for i in inputs:
     move(i[0], i[1])
 
-
 poly = shapely.Polygon(visited)
-
-# 55260
+# 53300
 poly.area + (poly.length / 2) + 1
-
-row_bounds = (int(poly.bounds[0]), int(poly.bounds[2] + 1))
-col_bounds = (int(poly.bounds[1]), int(poly.bounds[3] + 1))
-
-within = 0
-for row in range(*row_bounds):
-    for col in range(*col_bounds):
-        p = shapely.Point(row, col)
-        if poly.contains(p) or poly.touches(p):
-            within += 1
-
-p1 = within
-
 
 ### p2
 inputs_two = []
@@ -83,7 +65,7 @@ for input in inputs:
         int(input[2][1:6], 16)
     ))
 
-
+# much more efficient, should have done first
 def move_two(dir, num):
     row, col = visited[-1]
     if dir == "R":
@@ -99,11 +81,9 @@ def move_two(dir, num):
 start = (0, 0)
 visited = [start, ]
 
-
 for i in inputs_two:
     move_two(i[0], i[1])
 
 poly = shapely.Polygon(visited)
-
 p2 = poly.area + (poly.length / 2) + 1
 
